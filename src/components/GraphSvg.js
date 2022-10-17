@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getDag } from "../api/getDag";
 import Graph from "./Graph";
 
 export default function GraphSvg() {
 
-    const [dimensions, setDimensions] = useState({
+    const [dimensions] = useState({
         width: window.innerWidth,
         height: window.innerHeight
     })
@@ -13,7 +13,10 @@ export default function GraphSvg() {
 
     // Initial node data
     let [nodesData, setNodesData] = useState(dagJson["nodes"])    
-    // let [edges, setEdges] = useState(dagJson["edges"])
+    let [edgesData] = useState(dagJson["edges"])
+
+    console.log(nodesData)
+    console.log(edgesData)
     // let [idCount, setIdCount] = useState(2)
 
     
@@ -50,9 +53,19 @@ export default function GraphSvg() {
         setNodesData([...nodesData, newNodeData])
     }
 
+    // function handleMouseDown(e) {
+    //     if (e.shiftKey) { console.log(e); return }
+    //     console.log("Use shift")
+    // }
 
     return (
-        <svg width={dimensions.width} height={dimensions.height} style={helperStyleObject} onDoubleClick={addNode}>
+        <svg 
+            width={dimensions.width} 
+            height={dimensions.height} 
+            style={helperStyleObject} 
+            onDoubleClick={addNode} 
+            // onMouseDown={handleMouseDown}
+        >
             <defs>
                 <marker id="end-arrow" viewBox="0 -5 10 10" refX="32" markerWidth="3.5" markerHeight="3.5" orient="auto">
                     <path d="M0,-5L10,0L0,5"></path>
@@ -61,7 +74,7 @@ export default function GraphSvg() {
                     <path d="M0,-5L10,0L0,5"></path>
                 </marker>
             </defs>
-            <Graph nodesData={nodesData}/>
+            <Graph nodesData={nodesData} edgesData={edgesData} />
         </svg>
     )
 }

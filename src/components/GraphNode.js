@@ -15,6 +15,9 @@ export default function GraphNode({id,x,y,title = "Default"}) {
     }
     function handleDragMove() {
         console.log("Dragging...")
+        // TODO I'm not sure we really need to use the setCoordinates
+        // method here. We can simply update the state when we the drag
+        // has ended
         setCoordinates({
             xPos: d3.event.x, 
             yPos: d3.event.y
