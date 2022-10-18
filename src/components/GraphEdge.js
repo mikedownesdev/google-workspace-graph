@@ -8,11 +8,6 @@ export default function GraphEdge({sourceNode, targetNode}) {
     // targetNodeX = 1196,
     // targetNodeY = 368
 
-    // let sourceNodeX = sourceNode.x;
-    // let sourceNodeY = sourceNode.y;
-    // let targetNodeX = targetNode.x;
-    // let targetNodeY = targetNode.y;
-
     let pathString = 
     `M${sourceNode.x},${sourceNode.y}L${targetNode.x},${targetNode.y}`;
 

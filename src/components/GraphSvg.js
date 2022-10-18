@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { getDag } from "../api/getDag";
-import Graph from "./Graph";
+// import Graph from "./Graph";
+import GraphEdge from "./GraphEdge";
+import GraphNode from "./GraphNode";
+import * as d3 from 'd3'
 
 export default function GraphSvg() {
 
@@ -11,13 +14,76 @@ export default function GraphSvg() {
 
     let dagJson = getDag();
 
-    // Initial node data
-    let [nodesData, setNodesData] = useState(dagJson["nodes"])    
-    let [edgesData] = useState(dagJson["edges"])
+    // Set each node to selected: false on mount
+    let initalNodesData = dagJson["nodes"].map(n => ({...n, selected: false}) )
 
-    console.log(nodesData)
-    console.log(edgesData)
+    // Initial node data
+    let [nodesData, setNodesData] = useState(initalNodesData)    
+    let [edgesData] = useState(dagJson["edges"])
     // let [idCount, setIdCount] = useState(2)
+
+    let edges = edgesData.map(e => {
+        let edgeData = {
+            // TODO @Mike switch filter for find
+            sourceNode: nodesData.filter(n => n.id === e.source)[0],
+            targetNode: nodesData.filter(n => n.id === e.target)[0]
+        }
+        return <GraphEdge key={`${e.source}-${e.target}`} {...edgeData} />
+    })
+
+    // let edges = edgesData.map(e => {
+    //     return <GraphEdge key={`${e.source}-${e.target}`} {...e} />
+    // })
+
+    /** Nodes */
+    let nodeHandlers = {
+        handleNodeClicked: (id) => { 
+            console.log(`Node clicked. Id = ${id}`) 
+            let newNodesData =  [...nodesData]  // Copy the state 
+            let clickedNode = newNodesData.find(n => n.id === id);
+            clickedNode.selected = !clickedNode.selected;
+            setNodesData(newNodesData)
+        },
+        handleNodeDragStart: (id) => { 
+            // TODO add drop shadow during drag
+            console.log(`Drag is starting for Node with Id: ${id}`) 
+        },
+        handleNodeDrag: (id) => {
+            console.log(`Dragging Node with Id: ${id}...`) 
+            let newNodesData = [...nodesData]
+            let draggedNode = newNodesData.find(n => n.id === id);
+            draggedNode.x = d3.event.x;
+            draggedNode.y = d3.event.y;
+            setNodesData(newNodesData)
+
+            
+            // TODO I'm not sure we really need to use the setCoordinates
+            // method here. We can simply update the state when we the drag
+            // has ended
+            // setCoordinates({
+            //     xPos: d3.event.x, 
+            //     yPos: d3.event.y
+            // }) 
+        },
+        handleNodeDragEnd: (id) => { 
+            console.log(`Drag end for Node with Id: ${id}`) 
+            console.log(`updating nodes state`) 
+            let newNodesData = [...nodesData]
+            let draggedNode = newNodesData.find(n => n.id === id);
+            draggedNode.x = d3.event.sourceEvent.x
+            draggedNode.y = d3.event.sourceEvent.y
+            setNodesData(newNodesData)
+        }
+    }
+    let nodes = nodesData.map(n => {
+        let props = {
+            data: n,
+            handlers: nodeHandlers
+        }
+        return <GraphNode key={n.id} {...props} />
+    })
+    
+    let style = {}
 
     
 
@@ -74,7 +140,16 @@ export default function GraphSvg() {
                     <path d="M0,-5L10,0L0,5"></path>
                 </marker>
             </defs>
-            <Graph nodesData={nodesData} edgesData={edgesData} />
+            <g className="graph">
+                <path className="link dragline hidden" d="M0,0L0,0" style={style}></path>
+                <g id="nodes-g">
+                    {nodes}
+                </g>
+                <g id="edges-g">
+                 {edges}
+                </g>
+            </g>
+            {/* <Graph nodesData={nodesData} edgesData={edgesData} /> */}
         </svg>
     )
 }

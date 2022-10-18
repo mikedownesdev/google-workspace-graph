@@ -19,9 +19,6 @@ export default function Graph({nodesData, edgesData}) {
     let nodes = nodesData.map(n => <GraphNode key={n.id} {...n} />)
     
     let style = {}
-
-    
-
     
     return (
         <g className="graph">
