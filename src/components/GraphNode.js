@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as d3 from 'd3'
 
 function getClass(selected) {
@@ -18,17 +18,22 @@ function getClass(selected) {
  */
 export default function GraphNode({data, handlers}) {
 
-    let [coordinates, setCoordinates] = useState(
-        {xPos: data.x, yPos: data.y}
-    )
+    // let [coordinates, setCoordinates] = useState(
+    //     {xPos: data.x, yPos: data.y}
+    // )
+    let positionString = `translate(${data.x},${data.y})`
 
+    // Display the number of renders
     let renderCount = useRef(1)
+    useEffect(() => { 
+        renderCount.current = renderCount.current + 1;
+    })
 
     // let [xPos] = useState(x)
     // let [yPos] = useState(y)
     // let positionString = `translate(${coordinates.xPos},${coordinates.yPos})`
 
-    let positionString = `translate(${data.x},${data.y})`
+    
 
 
     // function handleDragStart() {
@@ -68,6 +73,7 @@ export default function GraphNode({data, handlers}) {
      * will move to where the mouse is which can be as a jump on the screen.
      * In most cases, you'll want to define the origin to avoid this behavior.
      */
+    // TODO @Evan -- when and how often does this code execute?
     let dragBehavior = d3.behavior.drag()
         .origin(() => { return { x: d3.event.x, y: d3.event.y }; })
         .on("dragstart", () => { handlers.handleNodeDragStart(data.id) })
@@ -78,15 +84,56 @@ export default function GraphNode({data, handlers}) {
         // .on("drag", handlers.onNodeDrag)
         // .on("dragend", handlers.onNodeDragEnd)
 
-    useEffect(() => {
-        renderCount.current = renderCount.current + 1;
-    })
+
 
     
     useEffect(() => {
         let g = d3.select(`#n-${data.id}`)
-        g.call(dragBehavior)
-        // return () => { g.on() }
+        // g.call(dragBehavior)
+
+        const delta = 5;
+        let startX;
+        let startY;
+        let mouseState = "up"
+
+        g.on('mousedown', () => { 
+            console.log('mousedown') 
+            startX = d3.event.x;
+            startY = d3.event.y;
+            mouseState = "down"
+        })
+
+        g.on('mousemove', () => {
+            console.log(`Mouse State: ${mouseState}`)
+            if (mouseState === "down") {
+                const diffX = Math.abs(d3.event.x - startX);
+                const diffY = Math.abs(d3.event.y - startY);
+                if (diffX > delta || diffY > delta) {
+                    console.log("Now we're dragging")
+                    handlers.handleNodeDrag(data.id)
+                }
+            }
+        })
+
+        g.on('mouseup', () => {
+            console.log('mouseup')
+            const diffX = Math.abs(d3.event.x - startX);
+            const diffY = Math.abs(d3.event.y - startY);
+            mouseState = "up"
+            if (diffX < delta && diffY < delta) {
+                // Click!
+                console.log('click')
+                handlers.handleNodeClicked(data.id)
+            }
+        })
+
+        // Teardown code
+        return () => { 
+            console.log("Removing event handlers")
+            g.on('mousedown', null) 
+            g.on('mousemove', null)
+            g.on('mouseup', null)
+        }
     }, []) // No dependencies means that this will only run upon mount
 
     // function onMouseDown(e) {
@@ -98,7 +145,6 @@ export default function GraphNode({data, handlers}) {
         <g id={`n-${data.id}`} 
         className={getClass(data.selected)}
         draggable="true" 
-        onClick={() => handlers.handleNodeClicked(data.id)}
         transform={positionString}>
             <circle r="50"></circle>
             <text textAnchor="middle" dy="-7.5">

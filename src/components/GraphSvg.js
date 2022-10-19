@@ -25,8 +25,8 @@ export default function GraphSvg() {
     let edges = edgesData.map(e => {
         let edgeData = {
             // TODO @Mike switch filter for find
-            sourceNode: nodesData.filter(n => n.id === e.source)[0],
-            targetNode: nodesData.filter(n => n.id === e.target)[0]
+            sourceNode: nodesData.find(n => n.id === e.source),
+            targetNode: nodesData.find(n => n.id === e.target)
         }
         return <GraphEdge key={`${e.source}-${e.target}`} {...edgeData} />
     })
@@ -40,6 +40,13 @@ export default function GraphSvg() {
         handleNodeClicked: (id) => { 
             console.log(`Node clicked. Id = ${id}`) 
             let newNodesData =  [...nodesData]  // Copy the state 
+            let previouslySelectedNode = newNodesData.find(n=> {
+                return n.selected
+            })
+            if (previouslySelectedNode) { 
+                previouslySelectedNode.selected = false;
+            } 
+            
             let clickedNode = newNodesData.find(n => n.id === id);
             clickedNode.selected = !clickedNode.selected;
             setNodesData(newNodesData)
@@ -109,14 +116,15 @@ export default function GraphSvg() {
     }
 
     function addNode(e) {        
-        let newNodeData = {
+        let newNodesData = [...nodesData]
+        let newNode = {
             "id": new Date().valueOf(),
             "title": "Created",
             "x": e.clientX,
             "y": e.clientY, //Math.random() * ((dimensions.height * .9) - 50) + 50
         }
-
-        setNodesData([...nodesData, newNodeData])
+        newNodesData.push(newNode)
+        setNodesData(newNodesData)
     }
 
     // function handleMouseDown(e) {
@@ -142,11 +150,11 @@ export default function GraphSvg() {
             </defs>
             <g className="graph">
                 <path className="link dragline hidden" d="M0,0L0,0" style={style}></path>
+                <g id="edges-g">
+                    {edges}
+                </g>
                 <g id="nodes-g">
                     {nodes}
-                </g>
-                <g id="edges-g">
-                 {edges}
                 </g>
             </g>
             {/* <Graph nodesData={nodesData} edgesData={edgesData} /> */}
