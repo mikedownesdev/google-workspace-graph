@@ -19,8 +19,9 @@ export default function GraphSvg() {
 
     // Initial node data
     let [nodesData, setNodesData] = useState(initalNodesData)    
-    let [edgesData] = useState(dagJson["edges"])
-    // let [idCount, setIdCount] = useState(2)
+    let [edgesData, setEdgesData] = useState(dagJson["edges"])
+    let [isCreatingEdge, setIsCreatingEdge] = useState({ is: false, from: null })
+    console.log(`isCreatingEdge: ${isCreatingEdge.is} from ${isCreatingEdge.from}`)
 
     let edges = edgesData.map(e => {
         let edgeData = {
@@ -36,7 +37,6 @@ export default function GraphSvg() {
     // })
 
     /** Nodes */
-    console.log('render')
     const nodeHandlers = {
         handleNodeClicked: (id) => { 
             console.log(`Node clicked. Id = ${id}`) 
@@ -51,6 +51,24 @@ export default function GraphSvg() {
             let clickedNode = newNodesData.find(n => n.id === id);
             clickedNode.selected = !clickedNode.selected;
             setNodesData(newNodesData)
+        },
+
+        handleNodeMouseLeave: (info) => {
+            console.log('handleNodeMouseLeave')
+            setIsCreatingEdge(info)
+        },
+
+        handleNodeMouseUp: (id) => {
+            console.log(`handleNodeMouseUp on ${id}`)
+            if (isCreatingEdge.is && isCreatingEdge.from !== id) {
+                let newEdgesData = [...edgesData]
+                let newEdge = {
+                    "source": isCreatingEdge.from,
+                    "target": id
+                }
+                newEdgesData.push(newEdge)
+                setEdgesData(newEdgesData)
+            }
         },
 
         // handleNodeDragStart: (id) => { 
@@ -85,8 +103,19 @@ export default function GraphSvg() {
         //     draggedNode.x = d3.event.sourceEvent.x
         //     draggedNode.y = d3.event.sourceEvent.y
         //     setNodesData(newNodesData)
-        // }
+        // },
+
     }
+
+    const svgHandlers = {
+        handleMouseUp: () => {
+            console.log('mouseUpInSvg')
+            if (isCreatingEdge.is) {
+                setIsCreatingEdge(false)
+            }
+        }
+    }
+
     let nodes = nodesData.map(n => {
         // let poopychute = {
         //     data: n,
@@ -154,7 +183,8 @@ export default function GraphSvg() {
             width={dimensions.width} 
             height={dimensions.height} 
             style={helperStyleObject} 
-            onDoubleClick={addNode} 
+            onDoubleClick={addNode}
+            onMouseUp={svgHandlers.handleMouseUp}
             // onMouseDown={handleMouseDown}
         >
             <defs>

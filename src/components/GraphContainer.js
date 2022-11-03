@@ -6,6 +6,9 @@ import GraphSvg from './GraphSvg.js'
 export default function GraphContainer() {    
     return (
         <div id="graph">
+            <div id="reportbox">
+                <p>Hello</p>
+            </div>
             <div id="toolbox">
                 <input type="file" id="hidden-file-upload" />
                 <input id="upload-input" type="image" title="upload graph" src={uploadIcon} alt="upload graph" /> 

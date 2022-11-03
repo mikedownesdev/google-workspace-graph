@@ -96,9 +96,14 @@ export default function GraphNode({x, y, id, selected, title, handlers}) {
         let startX;
         let startY;
         let mouseState = "up"
+        let edgeAttempt = false
 
         g.on('mousedown', () => { 
-            console.log('mousedown') 
+            console.log('mouseDownInNode') 
+            if (d3.event.shiftKey) {
+                console.log('with shift')
+                edgeAttempt = true
+            }
             startX = d3.event.x;
             startY = d3.event.y;
             mouseState = "down"
@@ -116,15 +121,29 @@ export default function GraphNode({x, y, id, selected, title, handlers}) {
         //     }
         // })
 
+        g.on('mouseleave', () => {
+            if (edgeAttempt) {
+                handlers.handleNodeMouseLeave({ is: true, from: id })
+            }
+            mouseState = "up"
+        })
+
         g.on('mouseup', () => {
-            console.log('mouseup')
+            console.log('mouseUpInNode')
             const diffX = Math.abs(d3.event.x - startX);
             const diffY = Math.abs(d3.event.y - startY);
             mouseState = "up"
             if (diffX < delta && diffY < delta) {
                 // Click!
-                console.log('click')
-                handlers.handleNodeClicked(id)
+                console.log(`edgeAttempt: ${edgeAttempt}`)
+                if (!edgeAttempt) {
+                    console.log('click')
+                    handlers.handleNodeClicked(id)
+                }
+            }
+            else {
+                console.log('whatever')
+                handlers.handleNodeMouseUp(id)
             }
         })
 
@@ -133,7 +152,6 @@ export default function GraphNode({x, y, id, selected, title, handlers}) {
             console.log("Removing event handlers")
             g.on('mousedown', null) 
             g.on('mousemove', null)
-            g.on('mouseup', null)
         }
     }) // No dependencies means that this will only run upon mount
 
