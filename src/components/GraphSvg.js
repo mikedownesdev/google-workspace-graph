@@ -36,12 +36,13 @@ export default function GraphSvg() {
     // })
 
     /** Nodes */
-    let nodeHandlers = {
+    console.log('render')
+    const nodeHandlers = {
         handleNodeClicked: (id) => { 
             console.log(`Node clicked. Id = ${id}`) 
             let newNodesData = [...nodesData]  // Copy the state 
             let previouslySelectedNode = newNodesData.find(n=> {
-                return n.selected
+                return n.selected && n.id !== id
             })
             if (previouslySelectedNode) { 
                 previouslySelectedNode.selected = false;

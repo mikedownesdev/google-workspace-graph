@@ -86,8 +86,9 @@ export default function GraphNode({x, y, id, selected, title, handlers}) {
 
 
 
-    
+    // debugger
     useEffect(() => {
+        // debugger
         let g = d3.select(`#n-${id}`)
         // g.call(dragBehavior)
 
@@ -134,7 +135,7 @@ export default function GraphNode({x, y, id, selected, title, handlers}) {
             g.on('mousemove', null)
             g.on('mouseup', null)
         }
-    }, []) // No dependencies means that this will only run upon mount
+    }) // No dependencies means that this will only run upon mount
 
     // function onMouseDown(e) {
     //     let circle = d3.select(e.target)
