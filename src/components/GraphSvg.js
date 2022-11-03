@@ -39,7 +39,7 @@ export default function GraphSvg() {
     let nodeHandlers = {
         handleNodeClicked: (id) => { 
             console.log(`Node clicked. Id = ${id}`) 
-            let newNodesData =  [...nodesData]  // Copy the state 
+            let newNodesData = [...nodesData]  // Copy the state 
             let previouslySelectedNode = newNodesData.find(n=> {
                 return n.selected
             })
@@ -51,43 +51,59 @@ export default function GraphSvg() {
             clickedNode.selected = !clickedNode.selected;
             setNodesData(newNodesData)
         },
-        handleNodeDragStart: (id) => { 
-            // TODO add drop shadow during drag
-            console.log(`Drag is starting for Node with Id: ${id}`) 
-        },
-        handleNodeDrag: (id) => {
-            console.log(`Dragging Node with Id: ${id}...`) 
-            let newNodesData = [...nodesData]
-            let draggedNode = newNodesData.find(n => n.id === id);
-            draggedNode.x = d3.event.x;
-            draggedNode.y = d3.event.y;
-            setNodesData(newNodesData)
+
+        // handleNodeDragStart: (id) => { 
+        //     // TODO add drop shadow during drag
+        //     console.log(`Drag is starting for Node with Id: ${id}`) 
+        // },
+
+        // handleNodeDrag: (id) => {
+        //     console.log(`Dragging Node with Id: ${id}...`) 
+        //     let newNodesData = [...nodesData]
+        //     let draggedNode = newNodesData.find(n => n.id === id);
+        //     draggedNode.x = d3.event.x;
+        //     draggedNode.y = d3.event.y;
+        //     console.log(newNodesData.find(n => n.id === id)); // 
+        //     setNodesData(newNodesData)
 
             
-            // TODO I'm not sure we really need to use the setCoordinates
-            // method here. We can simply update the state when we the drag
-            // has ended
-            // setCoordinates({
-            //     xPos: d3.event.x, 
-            //     yPos: d3.event.y
-            // }) 
-        },
-        handleNodeDragEnd: (id) => { 
-            console.log(`Drag end for Node with Id: ${id}`) 
-            console.log(`updating nodes state`) 
-            let newNodesData = [...nodesData]
-            let draggedNode = newNodesData.find(n => n.id === id);
-            draggedNode.x = d3.event.sourceEvent.x
-            draggedNode.y = d3.event.sourceEvent.y
-            setNodesData(newNodesData)
-        }
+        //     // TODO I'm not sure we really need to use the setCoordinates
+        //     // method here. We can simply update the state when we the drag
+        //     // has ended
+        //     // setCoordinates({
+        //     //     xPos: d3.event.x, 
+        //     //     yPos: d3.event.y
+        //     // }) 
+        // },
+
+        // handleNodeDragEnd: (id) => { 
+        //     console.log(`Drag end for Node with Id: ${id}`) 
+        //     console.log(`updating nodes state`) 
+        //     let newNodesData = [...nodesData]
+        //     let draggedNode = newNodesData.find(n => n.id === id);
+        //     draggedNode.x = d3.event.sourceEvent.x
+        //     draggedNode.y = d3.event.sourceEvent.y
+        //     setNodesData(newNodesData)
+        // }
     }
     let nodes = nodesData.map(n => {
-        let props = {
-            data: n,
-            handlers: nodeHandlers
-        }
-        return <GraphNode key={n.id} {...props} />
+        // let poopychute = {
+        //     data: n,
+        //     handlers: nodeHandlers
+        // }
+        // return <GraphNode key={n.id} {...poopychute} />
+        // return <GraphNode key={n.id} {...{data: n, handlers: nodeHandlers}} />
+        return (
+            <GraphNode 
+                key={n.id}
+                id={n.id}
+                x={n.x}
+                y={n.y}
+                title = {n.title}
+                selected={n.selected}
+                handlers={nodeHandlers} 
+            />
+        )
     })
     
     let style = {}
