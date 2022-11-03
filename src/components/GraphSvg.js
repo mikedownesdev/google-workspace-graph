@@ -19,8 +19,9 @@ export default function GraphSvg() {
 
     // Initial node data
     let [nodesData, setNodesData] = useState(initalNodesData)    
-    let [edgesData] = useState(dagJson["edges"])
-    // let [idCount, setIdCount] = useState(2)
+    let [edgesData, setEdgesData] = useState(dagJson["edges"])
+    let [isCreatingEdge, setIsCreatingEdge] = useState({ is: false, from: null })
+    console.log(`isCreatingEdge: ${isCreatingEdge.is} from ${isCreatingEdge.from}`)
 
     let edges = edgesData.map(e => {
         let edgeData = {
@@ -36,12 +37,12 @@ export default function GraphSvg() {
     // })
 
     /** Nodes */
-    let nodeHandlers = {
+    const nodeHandlers = {
         handleNodeClicked: (id) => { 
             console.log(`Node clicked. Id = ${id}`) 
-            let newNodesData =  [...nodesData]  // Copy the state 
+            let newNodesData = [...nodesData]  // Copy the state 
             let previouslySelectedNode = newNodesData.find(n=> {
-                return n.selected
+                return n.selected && n.id !== id
             })
             if (previouslySelectedNode) { 
                 previouslySelectedNode.selected = false;
@@ -51,43 +52,88 @@ export default function GraphSvg() {
             clickedNode.selected = !clickedNode.selected;
             setNodesData(newNodesData)
         },
-        handleNodeDragStart: (id) => { 
-            // TODO add drop shadow during drag
-            console.log(`Drag is starting for Node with Id: ${id}`) 
+
+        handleNodeMouseLeave: (info) => {
+            console.log('handleNodeMouseLeave')
+            setIsCreatingEdge(info)
         },
-        handleNodeDrag: (id) => {
-            console.log(`Dragging Node with Id: ${id}...`) 
-            let newNodesData = [...nodesData]
-            let draggedNode = newNodesData.find(n => n.id === id);
-            draggedNode.x = d3.event.x;
-            draggedNode.y = d3.event.y;
-            setNodesData(newNodesData)
+
+        handleNodeMouseUp: (id) => {
+            console.log(`handleNodeMouseUp on ${id}`)
+            if (isCreatingEdge.is && isCreatingEdge.from !== id) {
+                let newEdgesData = [...edgesData]
+                let newEdge = {
+                    "source": isCreatingEdge.from,
+                    "target": id
+                }
+                newEdgesData.push(newEdge)
+                setEdgesData(newEdgesData)
+            }
+        },
+
+        // handleNodeDragStart: (id) => { 
+        //     // TODO add drop shadow during drag
+        //     console.log(`Drag is starting for Node with Id: ${id}`) 
+        // },
+
+        // handleNodeDrag: (id) => {
+        //     console.log(`Dragging Node with Id: ${id}...`) 
+        //     let newNodesData = [...nodesData]
+        //     let draggedNode = newNodesData.find(n => n.id === id);
+        //     draggedNode.x = d3.event.x;
+        //     draggedNode.y = d3.event.y;
+        //     console.log(newNodesData.find(n => n.id === id)); // 
+        //     setNodesData(newNodesData)
 
             
-            // TODO I'm not sure we really need to use the setCoordinates
-            // method here. We can simply update the state when we the drag
-            // has ended
-            // setCoordinates({
-            //     xPos: d3.event.x, 
-            //     yPos: d3.event.y
-            // }) 
-        },
-        handleNodeDragEnd: (id) => { 
-            console.log(`Drag end for Node with Id: ${id}`) 
-            console.log(`updating nodes state`) 
-            let newNodesData = [...nodesData]
-            let draggedNode = newNodesData.find(n => n.id === id);
-            draggedNode.x = d3.event.sourceEvent.x
-            draggedNode.y = d3.event.sourceEvent.y
-            setNodesData(newNodesData)
+        //     // TODO I'm not sure we really need to use the setCoordinates
+        //     // method here. We can simply update the state when we the drag
+        //     // has ended
+        //     // setCoordinates({
+        //     //     xPos: d3.event.x, 
+        //     //     yPos: d3.event.y
+        //     // }) 
+        // },
+
+        // handleNodeDragEnd: (id) => { 
+        //     console.log(`Drag end for Node with Id: ${id}`) 
+        //     console.log(`updating nodes state`) 
+        //     let newNodesData = [...nodesData]
+        //     let draggedNode = newNodesData.find(n => n.id === id);
+        //     draggedNode.x = d3.event.sourceEvent.x
+        //     draggedNode.y = d3.event.sourceEvent.y
+        //     setNodesData(newNodesData)
+        // },
+
+    }
+
+    const svgHandlers = {
+        handleMouseUp: () => {
+            console.log('mouseUpInSvg')
+            if (isCreatingEdge.is) {
+                setIsCreatingEdge(false)
+            }
         }
     }
+
     let nodes = nodesData.map(n => {
-        let props = {
-            data: n,
-            handlers: nodeHandlers
-        }
-        return <GraphNode key={n.id} {...props} />
+        // let poopychute = {
+        //     data: n,
+        //     handlers: nodeHandlers
+        // }
+        // return <GraphNode key={n.id} {...poopychute} />
+        // return <GraphNode key={n.id} {...{data: n, handlers: nodeHandlers}} />
+        return (
+            <GraphNode 
+                key={n.id}
+                id={n.id}
+                x={n.x}
+                y={n.y}
+                title = {n.title}
+                selected={n.selected}
+                handlers={nodeHandlers} 
+            />
+        )
     })
     
     let style = {}
@@ -137,7 +183,8 @@ export default function GraphSvg() {
             width={dimensions.width} 
             height={dimensions.height} 
             style={helperStyleObject} 
-            onDoubleClick={addNode} 
+            onDoubleClick={addNode}
+            onMouseUp={svgHandlers.handleMouseUp}
             // onMouseDown={handleMouseDown}
         >
             <defs>

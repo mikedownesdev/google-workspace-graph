@@ -12,16 +12,16 @@ function getClass(selected) {
 /**
  * 
  * @param {*} props.data
- * @param {*} props.data.x
- * @param {*} props.data.y
+ * @param {*} props.x
+ * @param {*} props.y
  * @returns 
  */
-export default function GraphNode({data, handlers}) {
+export default function GraphNode({x, y, id, selected, title, handlers}) {
 
     // let [coordinates, setCoordinates] = useState(
-    //     {xPos: data.x, yPos: data.y}
+    //     {xPos: x, yPos: y}
     // )
-    let positionString = `translate(${data.x},${data.y})`
+    let positionString = `translate(${x},${y})`
 
     // Display the number of renders
     let renderCount = useRef(1)
@@ -38,7 +38,7 @@ export default function GraphNode({data, handlers}) {
 
     // function handleDragStart() {
     //     console.log('Drag is starting:')
-    //     handlers.handleNodeDragStart(data.id)
+    //     handlers.handleNodeDragStart(id)
     //     // handlers.handleNodeDragStart()
     // }
     // function handleDrag() {
@@ -55,7 +55,7 @@ export default function GraphNode({data, handlers}) {
     // }
     // function handleDragEnd() {
     //     console.log("Drag complete!")
-    //     handlers.handleNodeDragEnd(data.id)
+    //     handlers.handleNodeDragEnd(id)
     //     // console.log(this)
     //     // setCoordinates({
     //     //     xPos: d3.event.sourceEvent.x, 
@@ -74,11 +74,11 @@ export default function GraphNode({data, handlers}) {
      * In most cases, you'll want to define the origin to avoid this behavior.
      */
     // TODO @Evan -- when and how often does this code execute?
-    let dragBehavior = d3.behavior.drag()
-        .origin(() => { return { x: d3.event.x, y: d3.event.y }; })
-        .on("dragstart", () => { handlers.handleNodeDragStart(data.id) })
-        .on("drag", () => { handlers.handleNodeDrag(data.id) })
-        .on("dragend", () => { handlers.handleNodeDragEnd(data.id) })
+    // let dragBehavior = d3.behavior.drag()
+    //     .origin(() => { return { x: d3.event.x, y: d3.event.y }; })
+    //     .on("dragstart", () => { handlers.handleNodeDragStart(id) })
+    //     .on("drag", () => { handlers.handleNodeDrag(id) })
+    //     .on("dragend", () => { handlers.handleNodeDragEnd(id) })
         // TODO @Evan
         // .on("dragstart", handlers.onNodeDragStart)
         // .on("drag", handlers.onNodeDrag)
@@ -86,44 +86,64 @@ export default function GraphNode({data, handlers}) {
 
 
 
-    
+    // debugger
     useEffect(() => {
-        let g = d3.select(`#n-${data.id}`)
+        // debugger
+        let g = d3.select(`#n-${id}`)
         // g.call(dragBehavior)
 
         const delta = 5;
         let startX;
         let startY;
         let mouseState = "up"
+        let edgeAttempt = false
 
         g.on('mousedown', () => { 
-            console.log('mousedown') 
+            console.log('mouseDownInNode') 
+            if (d3.event.shiftKey) {
+                console.log('with shift')
+                edgeAttempt = true
+            }
             startX = d3.event.x;
             startY = d3.event.y;
             mouseState = "down"
         })
 
-        g.on('mousemove', () => {
-            console.log(`Mouse State: ${mouseState}`)
-            if (mouseState === "down") {
-                const diffX = Math.abs(d3.event.x - startX);
-                const diffY = Math.abs(d3.event.y - startY);
-                if (diffX > delta || diffY > delta) {
-                    console.log("Now we're dragging")
-                    handlers.handleNodeDrag(data.id)
-                }
+        // g.on('mousemove', () => {
+        //     console.log(`Mouse State: ${mouseState}`)
+        //     if (mouseState === "down") {
+        //         const diffX = Math.abs(d3.event.x - startX);
+        //         const diffY = Math.abs(d3.event.y - startY);
+        //         if (diffX > delta || diffY > delta) {
+        //             console.log("Now we're dragging")
+        //             handlers.handleNodeDrag(id)
+        //         }
+        //     }
+        // })
+
+        g.on('mouseleave', () => {
+            if (edgeAttempt) {
+                handlers.handleNodeMouseLeave({ is: true, from: id })
             }
+            mouseState = "up"
         })
 
         g.on('mouseup', () => {
-            console.log('mouseup')
+            console.log('mouseUpInNode')
             const diffX = Math.abs(d3.event.x - startX);
             const diffY = Math.abs(d3.event.y - startY);
             mouseState = "up"
             if (diffX < delta && diffY < delta) {
                 // Click!
-                console.log('click')
-                handlers.handleNodeClicked(data.id)
+                console.log(`edgeAttempt: ${edgeAttempt}`)
+                if (!edgeAttempt) {
+                    console.log('click')
+                    handlers.handleNodeClicked(id)
+                }
+            }
+            else {
+                console.log('whatever')
+                handlers.handleNodeMouseUp(id)
             }
         })
 
@@ -132,9 +152,8 @@ export default function GraphNode({data, handlers}) {
             console.log("Removing event handlers")
             g.on('mousedown', null) 
             g.on('mousemove', null)
-            g.on('mouseup', null)
         }
-    }, []) // No dependencies means that this will only run upon mount
+    }) // No dependencies means that this will only run upon mount
 
     // function onMouseDown(e) {
     //     let circle = d3.select(e.target)
@@ -142,13 +161,13 @@ export default function GraphNode({data, handlers}) {
     // }
 
     return (
-        <g id={`n-${data.id}`} 
-        className={getClass(data.selected)}
+        <g id={`n-${id}`} 
+        className={getClass(selected)}
         draggable="true" 
         transform={positionString}>
             <circle r="50"></circle>
             <text textAnchor="middle" dy="-7.5">
-                <tspan>{data.title}</tspan>
+                <tspan>{title}</tspan>
                 <tspan x="0" dy="15">{renderCount.current}</tspan>
             </text>
         </g>
