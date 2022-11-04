@@ -14,7 +14,7 @@ function getClass(selected) {
  * @param {Object} properties
  * @returns 
  */
-export default function GraphNode({properties, handleMouseUp, handleMouseLeave, handleClick}) {
+export default function GraphNode({properties, handleMouseUp, handleMouseLeave, handleClick, handleMove}) {
     
     const {x, y, id, title, selected} = properties;
 
@@ -97,6 +97,7 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
     }
 
     const localHandleMouseLeave = () => {
+        console.log(`mouseLeave on ${id}`)
         if (edgeAttempt) {
             handleMouseLeave({ is: true, from: id })
         }
@@ -124,7 +125,20 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
     }
 
     const localHandleMouseMove = (e) => {
-        return 
+        console.log(`mouseMove on ${id}`)
+        if (mouseState !== "down") { return } // break statement
+        
+        const diffX = Math.abs(e.clientX - startX);
+        const diffY = Math.abs(e.clientY - startY);
+        const brokeDragDelta = (diffX > delta || diffY > delta)
+        if (brokeDragDelta) {
+            // console.log('broken')
+            handleMove(id, e.clientX, e.clientY)
+        }
+        // else {
+        //     console.log('whatever')
+        //     handleMouseUp(id)
+        // }
     }
 
 
