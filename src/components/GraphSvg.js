@@ -56,10 +56,10 @@ export default function GraphSvg() {
             setNodesData(newNodesData)
         },
 
-        handleNodeMouseLeave: (info) => {
-            console.log('handleNodeMouseLeave')
-            setCreatingEdge(info)
-        },
+        // handleNodeMouseLeave: (info) => {
+        //     console.log('handleNodeMouseLeave')
+        //     setCreatingEdge(info)
+        // },
 
         handleNodeMouseUp: (id) => {
             // @TODO - Can create duplicate edges?!
@@ -110,16 +110,18 @@ export default function GraphSvg() {
 
     }
 
+    const handleNodeMouseLeave = info => {
+        console.log('handleNodeMouseLeave')
+        setCreatingEdge(info)
+    }
+
     let nodes = nodesData.map(n => {
         return (
             <GraphNode 
                 key={n.id}
-                id={n.id}
-                x={n.x}
-                y={n.y}
-                title = {n.title}
-                selected={n.selected}
-                handlers={nodeHandlers} 
+                properties={n}
+                handlers={nodeHandlers}
+                handleMouseLeave={handleNodeMouseLeave}
             />
         )
     })

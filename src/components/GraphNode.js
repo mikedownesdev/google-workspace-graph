@@ -11,27 +11,21 @@ function getClass(selected) {
 
 /**
  * 
- * @param {*} props.data
- * @param {*} props.x
- * @param {*} props.y
+ * @param {Object} properties
  * @returns 
  */
-export default function GraphNode({x, y, id, selected, title, handlers}) {
+export default function GraphNode({properties, handlers, handleMouseLeave}) {
+    
+    const {x, y, id, title, selected} = properties;
 
-    // let [coordinates, setCoordinates] = useState(
-    //     {xPos: x, yPos: y}
-    // )
-    let positionString = `translate(${x},${y})`
+    const positionString = `translate(${x},${y})`
 
     // Display the number of renders
-    let renderCount = useRef(1)
+    const renderCount = useRef(1)
     useEffect(() => { 
         renderCount.current = renderCount.current + 1;
     })
 
-    // let [xPos] = useState(x)
-    // let [yPos] = useState(y)
-    // let positionString = `translate(${coordinates.xPos},${coordinates.yPos})`
 
     
 
@@ -123,7 +117,7 @@ export default function GraphNode({x, y, id, selected, title, handlers}) {
 
         g.on('mouseleave', () => {
             if (edgeAttempt) {
-                handlers.handleNodeMouseLeave({ is: true, from: id })
+                handleMouseLeave({ is: true, from: id })
             }
             mouseState = "up"
         })
@@ -153,12 +147,9 @@ export default function GraphNode({x, y, id, selected, title, handlers}) {
             g.on('mousedown', null) 
             g.on('mousemove', null)
         }
-    }) // No dependencies means that this will only run upon mount
+    })
 
-    // function onMouseDown(e) {
-    //     let circle = d3.select(e.target)
-    //     console.log(circle)
-    // }
+
 
     return (
         <g id={`n-${id}`} 
