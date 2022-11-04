@@ -41,20 +41,20 @@ export default function GraphSvg() {
 
     /** -- Nodes ------------------------------------------------------------ */
     const nodeHandlers = {
-        handleNodeClicked: (id) => { 
-            console.log(`Node clicked. Id = ${id}`) 
-            const newNodesData = [...nodesData]  // Copy the state 
-            const previouslySelectedNode = newNodesData.find(n=> {
-                return n.selected && n.id !== id
-            })
-            if (previouslySelectedNode) { 
-                previouslySelectedNode.selected = false;
-            } 
+    //     handleNodeClicked: (id) => { 
+    //         console.log(`Node clicked. Id = ${id}`) 
+    //         const newNodesData = [...nodesData]  // Copy the state 
+    //         const previouslySelectedNode = newNodesData.find(n=> {
+    //             return n.selected && n.id !== id
+    //         })
+    //         if (previouslySelectedNode) { 
+    //             previouslySelectedNode.selected = false;
+    //         } 
             
-            const clickedNode = newNodesData.find(n => n.id === id);
-            clickedNode.selected = !clickedNode.selected;
-            setNodesData(newNodesData)
-        },
+    //         const clickedNode = newNodesData.find(n => n.id === id);
+    //         clickedNode.selected = !clickedNode.selected;
+    //         setNodesData(newNodesData)
+    //     },
 
         // handleNodeMouseLeave: (info) => {
         //     console.log('handleNodeMouseLeave')
@@ -110,18 +110,34 @@ export default function GraphSvg() {
 
     }
 
+    const handleNodeClicked = id => {
+        console.log(`Node clicked. Id = ${id}`) 
+        const newNodesData = [...nodesData]  // Copy the state 
+        const previouslySelectedNode = newNodesData.find(n=> {
+            return n.selected && n.id !== id
+        })
+        if (previouslySelectedNode) { 
+            previouslySelectedNode.selected = false;
+        } 
+        
+        const clickedNode = newNodesData.find(n => n.id === id);
+        clickedNode.selected = !clickedNode.selected;
+        setNodesData(newNodesData)
+    }
+
     const handleNodeMouseLeave = info => {
         console.log('handleNodeMouseLeave')
         setCreatingEdge(info)
     }
 
-    let nodes = nodesData.map(n => {
+    const nodes = nodesData.map(n => {
         return (
             <GraphNode 
                 key={n.id}
                 properties={n}
                 handlers={nodeHandlers}
                 handleMouseLeave={handleNodeMouseLeave}
+                handleClick={handleNodeClicked}
             />
         )
     })

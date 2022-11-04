@@ -14,7 +14,7 @@ function getClass(selected) {
  * @param {Object} properties
  * @returns 
  */
-export default function GraphNode({properties, handlers, handleMouseLeave}) {
+export default function GraphNode({properties, handlers, handleMouseLeave, handleClick}) {
     
     const {x, y, id, title, selected} = properties;
 
@@ -132,7 +132,7 @@ export default function GraphNode({properties, handlers, handleMouseLeave}) {
                 console.log(`edgeAttempt: ${edgeAttempt}`)
                 if (!edgeAttempt) {
                     console.log('click')
-                    handlers.handleNodeClicked(id)
+                    handleClick(id)
                 }
             }
             else {
