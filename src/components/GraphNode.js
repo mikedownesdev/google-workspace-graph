@@ -14,7 +14,7 @@ function getClass(selected) {
  * @param {Object} properties
  * @returns 
  */
-export default function GraphNode({properties, handlers, handleMouseUp, handleMouseLeave, handleClick}) {
+export default function GraphNode({properties, handleMouseUp, handleMouseLeave, handleClick}) {
     
     const {x, y, id, title, selected} = properties;
 
@@ -80,9 +80,7 @@ export default function GraphNode({properties, handlers, handleMouseUp, handleMo
 
 
 
-    // debugger
     useEffect(() => {
-        // debugger
         let g = d3.select(`#n-${id}`)
         // g.call(dragBehavior)
 
