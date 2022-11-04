@@ -40,7 +40,6 @@ export default function GraphSvg() {
     
 
     /** -- Nodes ------------------------------------------------------------ */
-    const nodeHandlers = {
     //     handleNodeClicked: (id) => { 
     //         console.log(`Node clicked. Id = ${id}`) 
     //         const newNodesData = [...nodesData]  // Copy the state 
@@ -61,19 +60,20 @@ export default function GraphSvg() {
         //     setCreatingEdge(info)
         // },
 
-        handleNodeMouseUp: (id) => {
-            // @TODO - Can create duplicate edges?!
-            console.log(`handleNodeMouseUp on ${id}`)
-            if (creatingEdge.is && creatingEdge.from !== id) {
-                const newEdgesData = [...edgesData]
-                const newEdge = {
-                    "source": creatingEdge.from,
-                    "target": id
-                }
-                newEdgesData.push(newEdge)
-                setEdgesData(newEdgesData)
-            }
-        },
+        // handleNodeMouseUp: (id) => {
+        //     // @TODO - Can create duplicate edges?!
+        //     console.log(`handleNodeMouseUp on ${id}`)
+        //     if (creatingEdge.is && creatingEdge.from !== id) {
+        //         const newEdgesData = [...edgesData]
+        //         const newEdge = {
+        //             "source": creatingEdge.from,
+        //             "target": id
+        //         }
+        //         newEdgesData.push(newEdge)
+        //         setEdgesData(newEdgesData)
+        //     }
+        // },
+
         // handleNodeDragStart: (id) => { 
         //     // TODO add drop shadow during drag
         //     console.log(`Drag is starting for Node with Id: ${id}`) 
@@ -108,6 +108,19 @@ export default function GraphSvg() {
         //     setNodesData(newNodesData)
         // },
 
+
+    const handleNodeMouseUp = id => {
+        // @TODO - Can create duplicate edges?!
+        console.log(`handleNodeMouseUp on ${id}`)
+        if (creatingEdge.is && creatingEdge.from !== id) {
+            const newEdgesData = [...edgesData]
+            const newEdge = {
+                "source": creatingEdge.from,
+                "target": id
+            }
+            newEdgesData.push(newEdge)
+            setEdgesData(newEdgesData)
+        }
     }
 
     const handleNodeClicked = id => {
@@ -133,9 +146,10 @@ export default function GraphSvg() {
     const nodes = nodesData.map(n => {
         return (
             <GraphNode 
-                key={n.id}
-                properties={n}
-                handlers={nodeHandlers}
+                key = {n.id}
+                properties = {n}
+                handlers = {nodeHandlers}
+                handleMouseUp = {handleNodeMouseUp}
                 handleMouseLeave={handleNodeMouseLeave}
                 handleClick={handleNodeClicked}
             />

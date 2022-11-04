@@ -14,7 +14,7 @@ function getClass(selected) {
  * @param {Object} properties
  * @returns 
  */
-export default function GraphNode({properties, handlers, handleMouseLeave, handleClick}) {
+export default function GraphNode({properties, handlers, handleMouseUp, handleMouseLeave, handleClick}) {
     
     const {x, y, id, title, selected} = properties;
 
@@ -137,7 +137,7 @@ export default function GraphNode({properties, handlers, handleMouseLeave, handl
             }
             else {
                 console.log('whatever')
-                handlers.handleNodeMouseUp(id)
+                handleMouseUp(id)
             }
         })
 
