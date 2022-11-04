@@ -113,6 +113,11 @@ export default function GraphSvg() {
         // @TODO - Can create duplicate edges?!
         console.log(`handleNodeMouseUp on ${id}`)
         if (creatingEdge.is && creatingEdge.from !== id) {
+            const edgeExists = edgesData.some((edge) => {
+                return (edge.source === creatingEdge.from 
+                    && edge.target === id)
+            })
+            if (edgeExists) { return }
             const newEdgesData = [...edgesData]
             const newEdge = {
                 "source": creatingEdge.from,
