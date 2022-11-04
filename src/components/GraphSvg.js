@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { getDag } from "../api/getDag";
-// import Graph from "./Graph";
 import GraphEdge from "./GraphEdge";
 import GraphNode from "./GraphNode";
 import * as d3 from 'd3'
@@ -19,16 +18,16 @@ export default function GraphSvg() {
     const initalNodesData = dagJson["nodes"].map(n => ({...n, selected: false}))
     const initialEdgesData = dagJson["edges"];
 
-    let [nodesData, setNodesData] = useState(initalNodesData)    
-    let [edgesData, setEdgesData] = useState(initialEdgesData)
-    let [creatingEdge, setCreatingEdge] = useState({ is: false, from: null })
+    const [nodesData, setNodesData] = useState(initalNodesData)    
+    const [edgesData, setEdgesData] = useState(initialEdgesData)
+    const [creatingEdge, setCreatingEdge] = useState({ is: false, from: null })
     console.log(`creatingEdge: ${creatingEdge.is} from ${creatingEdge.from}`)
 
     /** -- Edges ------------------------------------------------------------ */
     const edges = edgesData.map(e => {
-        let key = `${e.source}-${e.target}`
-        let sourceNode = nodesData.find(n => n.id === e.source) 
-        let targetNode = nodesData.find(n => n.id === e.target)
+        const key = `${e.source}-${e.target}`
+        const sourceNode = nodesData.find(n => n.id === e.source) 
+        const targetNode = nodesData.find(n => n.id === e.target)
 
         return (
             <GraphEdge 
@@ -44,15 +43,15 @@ export default function GraphSvg() {
     const nodeHandlers = {
         handleNodeClicked: (id) => { 
             console.log(`Node clicked. Id = ${id}`) 
-            let newNodesData = [...nodesData]  // Copy the state 
-            let previouslySelectedNode = newNodesData.find(n=> {
+            const newNodesData = [...nodesData]  // Copy the state 
+            const previouslySelectedNode = newNodesData.find(n=> {
                 return n.selected && n.id !== id
             })
             if (previouslySelectedNode) { 
                 previouslySelectedNode.selected = false;
             } 
             
-            let clickedNode = newNodesData.find(n => n.id === id);
+            const clickedNode = newNodesData.find(n => n.id === id);
             clickedNode.selected = !clickedNode.selected;
             setNodesData(newNodesData)
         },
@@ -63,10 +62,11 @@ export default function GraphSvg() {
         },
 
         handleNodeMouseUp: (id) => {
+            // @TODO - Can create duplicate edges?!
             console.log(`handleNodeMouseUp on ${id}`)
             if (creatingEdge.is && creatingEdge.from !== id) {
-                let newEdgesData = [...edgesData]
-                let newEdge = {
+                const newEdgesData = [...edgesData]
+                const newEdge = {
                     "source": creatingEdge.from,
                     "target": id
                 }
@@ -155,14 +155,14 @@ export default function GraphSvg() {
     // const [width, setWidth] = useState(window.innerWidth || docEl.clientWidth || bodyEl.clientWidth)
     // const [height, setHeight] = useState(window.innerHeight|| docEl.clientHeight|| bodyEl.clientHeight)
 
-    let helperStyleObject = {
+    const helperStyleObject = {
         border: "4px black solid",
         margin: "4px",
     }
 
     function addNode(e) {        
-        let newNodesData = [...nodesData]
-        let newNode = {
+        const newNodesData = [...nodesData]
+        const newNode = {
             "id": new Date().valueOf(),
             "title": "Created",
             "x": e.clientX,
@@ -199,7 +199,6 @@ export default function GraphSvg() {
                     {nodes}
                 </g>
             </g>
-            {/* <Graph nodesData={nodesData} edgesData={edgesData} /> */}
         </svg>
     )
 }
