@@ -148,7 +148,6 @@ export default function GraphSvg() {
             <GraphNode 
                 key = {n.id}
                 properties = {n}
-                handlers = {nodeHandlers}
                 handleMouseUp = {handleNodeMouseUp}
                 handleMouseLeave={handleNodeMouseLeave}
                 handleClick={handleNodeClicked}

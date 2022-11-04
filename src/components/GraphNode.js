@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as d3 from 'd3'
 
 function getClass(selected) {
@@ -17,6 +17,12 @@ function getClass(selected) {
 export default function GraphNode({properties, handleMouseUp, handleMouseLeave, handleClick}) {
     
     const {x, y, id, title, selected} = properties;
+
+    const delta = 5;
+    const [startX, setStartX] = useState(undefined);
+    const [startY, setStartY] = useState(undefined);
+    const [mouseState, setMouseState] = useState("up")
+    const [edgeAttempt, setEdgeAttempt] = useState(false)
 
     const positionString = `translate(${x},${y})`
 
@@ -79,27 +85,60 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
         // .on("dragend", handlers.onNodeDragEnd)
 
 
+    const localHandleMouseDown = (e) => {
+        console.log('mouseDownInNode')
+        if (e.shiftKey) {
+            console.log('with shift')
+            setEdgeAttempt(true)           // Multiple sets???
+        }
+        setStartX(e.x)
+        setStartY(e.y)
+        setMouseState("down")
+    }
 
-    useEffect(() => {
-        let g = d3.select(`#n-${id}`)
+    const localHandleMouseLeave = () => {
+        if (edgeAttempt) {
+            handleMouseLeave({ is: true, from: id })
+        }
+        setMouseState("up")
+    }
+
+    const localHandleMouseUp = (e) => {
+        console.log('mouseUpInNode')
+        const diffX = Math.abs(e.x - startX);
+        const diffY = Math.abs(e.y - startY);
+        setMouseState("up")
+        if (diffX < delta && diffY < delta) {
+            // Click!
+            console.log(`edgeAttempt: ${edgeAttempt}`)
+            if (!edgeAttempt) {
+                console.log('click')
+                handleClick(id)
+            }
+        }
+        else {
+            console.log('whatever')
+            handleMouseUp(id)
+        }
+        
+    }
+
+
+
+    // useEffect(() => {
+    //     let g = d3.select(`#n-${id}`)
         // g.call(dragBehavior)
 
-        const delta = 5;
-        let startX;
-        let startY;
-        let mouseState = "up"
-        let edgeAttempt = false
-
-        g.on('mousedown', () => { 
-            console.log('mouseDownInNode') 
-            if (d3.event.shiftKey) {
-                console.log('with shift')
-                edgeAttempt = true
-            }
-            startX = d3.event.x;
-            startY = d3.event.y;
-            mouseState = "down"
-        })
+        // g.on('mousedown', () => { 
+        //     console.log('mouseDownInNode') 
+        //     if (d3.event.shiftKey) {
+        //         console.log('with shift')
+        //         edgeAttempt = true
+        //     }
+        //     startX = d3.event.x;
+        //     startY = d3.event.y;
+        //     mouseState = "down"
+        // })
 
         // g.on('mousemove', () => {
         //     console.log(`Mouse State: ${mouseState}`)
@@ -113,47 +152,52 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
         //     }
         // })
 
-        g.on('mouseleave', () => {
-            if (edgeAttempt) {
-                handleMouseLeave({ is: true, from: id })
-            }
-            mouseState = "up"
-        })
+        // g.on('mouseleave', () => {
+        //     if (edgeAttempt) {
+        //         handleMouseLeave({ is: true, from: id })
+        //     }
+        //     mouseState = "up"
+        // })
 
-        g.on('mouseup', () => {
-            console.log('mouseUpInNode')
-            const diffX = Math.abs(d3.event.x - startX);
-            const diffY = Math.abs(d3.event.y - startY);
-            mouseState = "up"
-            if (diffX < delta && diffY < delta) {
-                // Click!
-                console.log(`edgeAttempt: ${edgeAttempt}`)
-                if (!edgeAttempt) {
-                    console.log('click')
-                    handleClick(id)
-                }
-            }
-            else {
-                console.log('whatever')
-                handleMouseUp(id)
-            }
-        })
+        // g.on('mouseup', () => {
+        //     console.log('mouseUpInNode')
+        //     const diffX = Math.abs(d3.event.x - startX);
+        //     const diffY = Math.abs(d3.event.y - startY);
+        //     mouseState = "up"
+        //     if (diffX < delta && diffY < delta) {
+        //         // Click!
+        //         console.log(`edgeAttempt: ${edgeAttempt}`)
+        //         if (!edgeAttempt) {
+        //             console.log('click')
+        //             handleClick(id)
+        //         }
+        //     }
+        //     else {
+        //         console.log('whatever')
+        //         handleMouseUp(id)
+        //     }
+        // })
 
         // Teardown code
-        return () => { 
-            console.log("Removing event handlers")
-            g.on('mousedown', null) 
-            g.on('mousemove', null)
-        }
-    })
+        // return () => { 
+        //     console.log("Removing event handlers")
+        //     g.on('mousedown', null) 
+        //     g.on('mousemove', null)
+        // }
+    // })
 
 
 
     return (
-        <g id={`n-${id}`} 
-        className={getClass(selected)}
-        draggable="true" 
-        transform={positionString}>
+        <g 
+            id={`n-${id}`} 
+            className={getClass(selected)}
+            draggable="true" 
+            transform={positionString}
+            onMouseDown={localHandleMouseDown}
+            onMouseLeave={localHandleMouseLeave}
+            onMouseUp={localHandleMouseUp}
+        >
             <circle r="50"></circle>
             <text textAnchor="middle" dy="-7.5">
                 <tspan>{title}</tspan>
