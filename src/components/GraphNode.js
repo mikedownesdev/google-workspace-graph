@@ -14,7 +14,7 @@ function getClass(selected) {
  * @param {Object} properties
  * @returns 
  */
-export default function GraphNode({properties, handleMouseUp, handleMouseLeave, handleClick}) {
+export default function GraphNode({properties, handleMouseUp, handleMouseLeave, handleClick, handleMove}) {
     
     const {x, y, id, title, selected} = properties;
 
@@ -91,12 +91,13 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
             console.log('with shift')
             setEdgeAttempt(true)           // Multiple sets???
         }
-        setStartX(e.x)
-        setStartY(e.y)
+        setStartX(e.clientX)
+        setStartY(e.clientY)
         setMouseState("down")
     }
 
     const localHandleMouseLeave = () => {
+        console.log(`mouseLeave on ${id}`)
         if (edgeAttempt) {
             handleMouseLeave({ is: true, from: id })
         }
@@ -104,9 +105,9 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
     }
 
     const localHandleMouseUp = (e) => {
-        console.log('mouseUpInNode')
-        const diffX = Math.abs(e.x - startX);
-        const diffY = Math.abs(e.y - startY);
+        console.log(`mouseUp on ${id}`)
+        const diffX = Math.abs(e.clientX - startX);
+        const diffY = Math.abs(e.clientY - startY);
         setMouseState("up")
         if (diffX < delta && diffY < delta) {
             // Click!
@@ -121,6 +122,23 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
             handleMouseUp(id)
         }
         
+    }
+
+    const localHandleMouseMove = (e) => {
+        console.log(`mouseMove on ${id}`)
+        if (mouseState !== "down") { return } // break statement
+
+        const diffX = Math.abs(e.clientX - startX);
+        const diffY = Math.abs(e.clientY - startY);
+        const brokeDragDelta = (diffX > delta || diffY > delta)
+        if (brokeDragDelta && !e.shiftKey) {
+            // console.log('broken')
+            handleMove(id, e.clientX, e.clientY)
+        }
+        // else {
+        //     console.log('whatever')
+        //     handleMouseUp(id)
+        // }
     }
 
 
@@ -194,6 +212,7 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
             className={getClass(selected)}
             draggable="true" 
             transform={positionString}
+            onMouseMove={localHandleMouseMove}
             onMouseDown={localHandleMouseDown}
             onMouseLeave={localHandleMouseLeave}
             onMouseUp={localHandleMouseUp}
