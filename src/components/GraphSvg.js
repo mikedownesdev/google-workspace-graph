@@ -163,7 +163,6 @@ export default function GraphSvg() {
     /** SVG Handlers -------------------------------------------------------- */
     const svgHandlers = {
         handleMouseUp: () => {
-            console.log('mouseUpInSvg')
             if (creatingEdge.is) {
                 setCreatingEdge(false)
             }

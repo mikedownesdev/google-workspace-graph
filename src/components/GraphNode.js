@@ -91,8 +91,8 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
             console.log('with shift')
             setEdgeAttempt(true)           // Multiple sets???
         }
-        setStartX(e.x)
-        setStartY(e.y)
+        setStartX(e.clientX)
+        setStartY(e.clientY)
         setMouseState("down")
     }
 
@@ -104,9 +104,9 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
     }
 
     const localHandleMouseUp = (e) => {
-        console.log('mouseUpInNode')
-        const diffX = Math.abs(e.x - startX);
-        const diffY = Math.abs(e.y - startY);
+        console.log(`mouseUp on ${id}`)
+        const diffX = Math.abs(e.clientX - startX);
+        const diffY = Math.abs(e.clientY - startY);
         setMouseState("up")
         if (diffX < delta && diffY < delta) {
             // Click!
@@ -121,6 +121,10 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
             handleMouseUp(id)
         }
         
+    }
+
+    const localHandleMouseMove = (e) => {
+        return 
     }
 
 
@@ -194,6 +198,7 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
             className={getClass(selected)}
             draggable="true" 
             transform={positionString}
+            onMouseMove={localHandleMouseMove}
             onMouseDown={localHandleMouseDown}
             onMouseLeave={localHandleMouseLeave}
             onMouseUp={localHandleMouseUp}
