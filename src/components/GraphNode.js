@@ -127,11 +127,11 @@ export default function GraphNode({properties, handleMouseUp, handleMouseLeave, 
     const localHandleMouseMove = (e) => {
         console.log(`mouseMove on ${id}`)
         if (mouseState !== "down") { return } // break statement
-        
+
         const diffX = Math.abs(e.clientX - startX);
         const diffY = Math.abs(e.clientY - startY);
         const brokeDragDelta = (diffX > delta || diffY > delta)
-        if (brokeDragDelta) {
+        if (brokeDragDelta && !e.shiftKey) {
             // console.log('broken')
             handleMove(id, e.clientX, e.clientY)
         }

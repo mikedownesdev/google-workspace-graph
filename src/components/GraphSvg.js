@@ -148,14 +148,23 @@ export default function GraphSvg() {
         setCreatingEdge(info)
     }
 
+    const handleNodeMove = (id, newX, newY) => {
+        const newNodesData = [...nodesData]  // Copy the state 
+        const movingNode = newNodesData.find(n => n.id === id)
+        movingNode.x = newX
+        movingNode.y = newY
+        setNodesData(newNodesData)
+    }
+
     const nodes = nodesData.map(n => {
         return (
             <GraphNode 
                 key = {n.id}
                 properties = {n}
                 handleMouseUp = {handleNodeMouseUp}
-                handleMouseLeave={handleNodeMouseLeave}
-                handleClick={handleNodeClicked}
+                handleMouseLeave = {handleNodeMouseLeave}
+                handleClick = {handleNodeClicked}
+                handleMove = {handleNodeMove}
             />
         )
     })
