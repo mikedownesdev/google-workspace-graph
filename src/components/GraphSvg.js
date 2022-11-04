@@ -6,37 +6,41 @@ import GraphNode from "./GraphNode";
 import * as d3 from 'd3'
 
 export default function GraphSvg() {
+    /** -- Get Data --------------------------------------------------------- */
+    const dagJson = getDag();
 
+    /** -- State ------------------------------------------------------------ */
     const [dimensions] = useState({
         width: window.innerWidth,
         height: window.innerHeight
     })
 
-    let dagJson = getDag();
-
     // Set each node to selected: false on mount
-    let initalNodesData = dagJson["nodes"].map(n => ({...n, selected: false}) )
+    const initalNodesData = dagJson["nodes"].map(n => ({...n, selected: false}))
+    const initialEdgesData = dagJson["edges"];
 
-    // Initial node data
     let [nodesData, setNodesData] = useState(initalNodesData)    
-    let [edgesData, setEdgesData] = useState(dagJson["edges"])
-    let [isCreatingEdge, setIsCreatingEdge] = useState({ is: false, from: null })
-    console.log(`isCreatingEdge: ${isCreatingEdge.is} from ${isCreatingEdge.from}`)
+    let [edgesData, setEdgesData] = useState(initialEdgesData)
+    let [creatingEdge, setCreatingEdge] = useState({ is: false, from: null })
+    console.log(`creatingEdge: ${creatingEdge.is} from ${creatingEdge.from}`)
 
-    let edges = edgesData.map(e => {
-        let edgeData = {
-            // TODO @Mike switch filter for find
-            sourceNode: nodesData.find(n => n.id === e.source),
-            targetNode: nodesData.find(n => n.id === e.target)
-        }
-        return <GraphEdge key={`${e.source}-${e.target}`} {...edgeData} />
+    /** -- Edges ------------------------------------------------------------ */
+    const edges = edgesData.map(e => {
+        let key = `${e.source}-${e.target}`
+        let sourceNode = nodesData.find(n => n.id === e.source) 
+        let targetNode = nodesData.find(n => n.id === e.target)
+
+        return (
+            <GraphEdge 
+                key={key}
+                sourceNode={sourceNode}  
+                targetNode={targetNode}
+            />)
     })
 
-    // let edges = edgesData.map(e => {
-    //     return <GraphEdge key={`${e.source}-${e.target}`} {...e} />
-    // })
+    
 
-    /** Nodes */
+    /** -- Nodes ------------------------------------------------------------ */
     const nodeHandlers = {
         handleNodeClicked: (id) => { 
             console.log(`Node clicked. Id = ${id}`) 
@@ -55,22 +59,21 @@ export default function GraphSvg() {
 
         handleNodeMouseLeave: (info) => {
             console.log('handleNodeMouseLeave')
-            setIsCreatingEdge(info)
+            setCreatingEdge(info)
         },
 
         handleNodeMouseUp: (id) => {
             console.log(`handleNodeMouseUp on ${id}`)
-            if (isCreatingEdge.is && isCreatingEdge.from !== id) {
+            if (creatingEdge.is && creatingEdge.from !== id) {
                 let newEdgesData = [...edgesData]
                 let newEdge = {
-                    "source": isCreatingEdge.from,
+                    "source": creatingEdge.from,
                     "target": id
                 }
                 newEdgesData.push(newEdge)
                 setEdgesData(newEdgesData)
             }
         },
-
         // handleNodeDragStart: (id) => { 
         //     // TODO add drop shadow during drag
         //     console.log(`Drag is starting for Node with Id: ${id}`) 
@@ -107,22 +110,7 @@ export default function GraphSvg() {
 
     }
 
-    const svgHandlers = {
-        handleMouseUp: () => {
-            console.log('mouseUpInSvg')
-            if (isCreatingEdge.is) {
-                setIsCreatingEdge(false)
-            }
-        }
-    }
-
     let nodes = nodesData.map(n => {
-        // let poopychute = {
-        //     data: n,
-        //     handlers: nodeHandlers
-        // }
-        // return <GraphNode key={n.id} {...poopychute} />
-        // return <GraphNode key={n.id} {...{data: n, handlers: nodeHandlers}} />
         return (
             <GraphNode 
                 key={n.id}
@@ -135,6 +123,17 @@ export default function GraphSvg() {
             />
         )
     })
+
+    /** SVG Handlers -------------------------------------------------------- */
+    const svgHandlers = {
+        handleMouseUp: () => {
+            console.log('mouseUpInSvg')
+            if (creatingEdge.is) {
+                setCreatingEdge(false)
+            }
+        }
+    }
+
     
     let style = {}
 
@@ -173,11 +172,7 @@ export default function GraphSvg() {
         setNodesData(newNodesData)
     }
 
-    // function handleMouseDown(e) {
-    //     if (e.shiftKey) { console.log(e); return }
-    //     console.log("Use shift")
-    // }
-
+    /** -- JSX Render ------------------------------------------------------- */
     return (
         <svg 
             width={dimensions.width} 
