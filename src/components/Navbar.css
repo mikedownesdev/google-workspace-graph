@@ -1,6 +1,13 @@
 nav {
     position: sticky; top: 0;
     display: flex;
-    height: 100px;
+    height: 48px;
     background-color: royalblue;
+    align-items: center;
+    padding: 8px;
+    z-index: 10;
+}
+
+nav span {
+    color: #5f6368;
 }
