@@ -206,6 +206,7 @@ export default function GraphSvg() {
 
     function addNode(e) {        
         const newNodesData = [...nodesData]
+        console.log(e)
         const newNode = {
             "id": new Date().valueOf(),
             "title": "Created",
