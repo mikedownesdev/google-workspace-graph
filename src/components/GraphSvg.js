@@ -2,6 +2,7 @@ import { useState } from "react";
 import { getDag } from "../api/getDag";
 import GraphEdge from "./GraphEdge";
 import GraphNode from "./GraphNode";
+import "./GraphSvg.css"
 
 export default function GraphSvg() {
     /** -- Get Data --------------------------------------------------------- */
@@ -178,9 +179,6 @@ export default function GraphSvg() {
     }
 
     
-    let style = {}
-
-    
 
     /**
      * useEffect will run upon mount, and 
@@ -198,11 +196,6 @@ export default function GraphSvg() {
     // const [width, setWidth] = useState(window.innerWidth || docEl.clientWidth || bodyEl.clientWidth)
     // const [height, setHeight] = useState(window.innerHeight|| docEl.clientHeight|| bodyEl.clientHeight)
 
-    const helperStyleObject = {
-        border: "4px black solid",
-        margin: "4px",
-    }
-
     function addNode(e) {        
         const newNodesData = [...nodesData]
         console.log(e)
@@ -219,9 +212,8 @@ export default function GraphSvg() {
     /** -- JSX Render ------------------------------------------------------- */
     return (
         <svg 
-            width={dimensions.width} 
-            height={dimensions.height} 
-            style={helperStyleObject} 
+            // width={dimensions.width} 
+            // height={dimensions.height} 
             onDoubleClick={addNode}
             onMouseUp={svgHandlers.handleMouseUp}
             // onMouseDown={handleMouseDown}
@@ -235,7 +227,7 @@ export default function GraphSvg() {
                 </marker>
             </defs>
             <g className="graph">
-                <path className="link dragline hidden" d="M0,0L0,0" style={style}></path>
+                <path className="link dragline hidden" d="M0,0L0,0"></path>
                 <g id="edges-g">
                     {edges}
                 </g>

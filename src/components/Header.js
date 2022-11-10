@@ -6,9 +6,9 @@ export default function Header() {
     return (
         <div id="header" className="header-flex-container">
             <div className="header-flex-item header-left">
-                <img src={logo} alt="logo" />
+                <img id="logo" src={logo} alt="logo" />
                 <span>
-                    Graph
+                    Workspace Graph
                 </span>
             </div>
             <div className="header-flex-item header-right">

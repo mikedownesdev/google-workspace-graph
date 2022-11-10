@@ -1,7 +1,10 @@
 #sidebar {
-    background-color: aqua;
-    /* margin:0px; */
-    padding: 4px;
+    background-color:#fff;
+    padding: 24px 12px 12px 12px;
+}
+
+#sidebar hr {
+    border-top: 1px solid #dadce0;
 }
 
 #sidebar ul {
@@ -10,6 +13,7 @@
 }
 
 #sidebar ul li {
+
     padding-top: 4px;
-    padding-bottom: 4px;;
+    padding-bottom: 4px;
 }

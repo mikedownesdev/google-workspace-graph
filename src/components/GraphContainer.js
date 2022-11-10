@@ -5,7 +5,7 @@ import './GraphContainer.css'
 export default function GraphContainer() {    
     return (
         <div id="graph-container">
-            <SearchContainer />
+            <SearchContainer /> 
             <GraphSvg />
         </div>
     )

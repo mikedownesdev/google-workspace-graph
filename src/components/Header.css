@@ -1,6 +1,6 @@
 #header {
     z-index: 100;
-    background-color: #f9f9f9;
+    background-color: #fff;
     border-bottom: 1px solid #dadce0;
     height: 64px;
     padding: 8px;
@@ -15,18 +15,23 @@
 }
 
 .header-flex-item {
-    background-color: gold ;
     display:flex
 }
 
 .header-left {
     display:flex;
     align-items: center;
+    padding-left: 12px
+}
+
+#logo {
+    width: 40px;
+    height: auto;
 }
 
 .header-left span {
     font-size: 20px;
-    padding-left: 4px;
+    padding-left: 6px;
     color: #5f6368;
     opacity: 1;
 }
