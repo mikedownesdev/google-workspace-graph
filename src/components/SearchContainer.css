@@ -7,17 +7,19 @@
     border: 2px solid #EEEEEE;
     border-radius: 5px;
     width: 250px;
-    padding: 1em;
+    padding: 8px;
     z-index: 5;
-    height: 100px;
-    background-color: blueviolet;
+    /* height: 100px; */
+    background-color: lightslategray;
+}
+
+#search-input {
+    width: 100%
 }
 
 #search-container input{
-    width: 30px;
-    opacity: 0.4;
+    opacity: 0.8;
 }
 #search-container input:hover{
     opacity: 1;
-    cursor: pointer;
 }
