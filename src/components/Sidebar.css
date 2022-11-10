@@ -1,0 +1,15 @@
+#sidebar {
+    background-color: aqua;
+    /* margin:0px; */
+    padding: 4px;
+}
+
+#sidebar ul {
+    margin: 0px;
+    list-style: none;
+}
+
+#sidebar ul li {
+    padding-top: 4px;
+    padding-bottom: 4px;;
+}

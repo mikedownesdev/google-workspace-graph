@@ -1,0 +1,32 @@
+#header {
+    z-index: 100;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #dadce0;
+    height: 64px;
+    padding: 8px;
+    box-sizing: border-box;
+    position: sticky; top: 0;
+}
+
+.header-flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-flex-item {
+    background-color: gold ;
+    display:flex
+}
+
+.header-left {
+    display:flex;
+    align-items: center;
+}
+
+.header-left span {
+    font-size: 20px;
+    padding-left: 4px;
+    color: #5f6368;
+    opacity: 1;
+}

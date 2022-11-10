@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap");
+
 body{
   margin: 0;
   padding: 0;
@@ -21,51 +23,25 @@ body{
   background-color: rgb(248, 248, 248)
 }
 
-.conceptG text{
-  pointer-events: none;
+.App {
+  display: grid;
+  grid-template-columns: 256px auto;
+  grid-template-rows:  auto;
 }
 
-
-marker{
-  fill: #333;
+.header-grid {
+  grid-column-start: 1;
+  grid-column-end: -1;
 }
 
-g.conceptG circle{
-  fill: #F6FBFF;
-  stroke: #333;
-  stroke-width: 2px;
+.sidebar-grid {
+  grid-column-start: 1;
+  grid-column-end: 2;
 }
 
-g.conceptG:hover circle{
-  fill: rgb(200, 238, 241);
+.graph-grid {
+  grid-column-start: 2;
+  grid-column-end: -1;
 }
 
-g.selected circle{
-  fill: rgb(250, 232, 255);
-}
-g.selected:hover circle{
-  fill: rgb(250, 232, 255);
-}
-
-path.link {
-  fill: none;
-  stroke: #333;
-  stroke-width: 6px;
-  cursor: default;
-}
-
-path.link:hover{
-  stroke: rgb(94, 196, 204);
-}
-
-g.connect-node circle{
-  fill: #BEFFFF;
-}
-
-path.link.hidden{
-  stroke-width: 0;
-}
-
-path.link.selected {
-  stroke: rgb(229, 172, 247);
-}
+/* .header-flex-item {} */

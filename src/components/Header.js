@@ -1,19 +1,19 @@
-import "./Navbar.css"
+import "./Header.css"
 import logo from "../assets/drive_logo.png"
 
-export default function Navbar() {
+export default function Header() {
 
     return (
-        <nav>
-            <div>
+        <div id="header" className="header-flex-container">
+            <div className="header-flex-item header-left">
                 <img src={logo} alt="logo" />
                 <span>
                     Graph
                 </span>
             </div>
-            <div>
+            <div className="header-flex-item header-right">
                 <img src={logo} alt="profile" />
             </div>
-        </nav>
+        </div>
     )
 }
