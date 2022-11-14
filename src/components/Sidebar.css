@@ -17,3 +17,15 @@
     padding-top: 4px;
     padding-bottom: 4px;
 }
+
+a {
+    text-decoration: none;
+}
+
+a.pending {
+    background-color: lightgray;
+}
+
+a.active {
+    background-color: aquamarine;
+}

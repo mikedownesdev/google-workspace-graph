@@ -1,5 +1,5 @@
+import { Outlet } from 'react-router-dom';
 import './App.css';
-import GraphContainer from './components/GraphContainer.js'
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 
@@ -13,7 +13,7 @@ export default function App() {
         <Sidebar />
       </div>
       <div className='graph-grid' style={{backgroundColor: "green"}}>
-        <GraphContainer />
+        <Outlet />
       </div>
     </div>
   );
