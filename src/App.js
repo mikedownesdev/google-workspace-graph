@@ -1,9 +1,35 @@
+import jwtDecode from 'jwt-decode';
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 
 export default function App() {
+
+  function handleCallbackResponse(response) {
+    console.log("Encoded JWT ID token: " + response.credential);
+    var userObject = jwtDecode(response.credential);
+    console.log(userObject)
+  }
+
+  useEffect(() => {
+    // This global google apparently tells the linter I know that YOU don't
+    // know that google exists, but we know its being loaded in from the script
+    // tag I added in my public/index.html file
+
+    /* global google */
+    google.accounts.id.initialize({
+      client_id: "808500334020-hg05i7gll0es5o2v6ihl13hjo5hjjbbo.apps.googleusercontent.com",
+      callback: handleCallbackResponse
+    })
+
+    google.accounts.id.renderButton(
+      document.getElementById("sign-in-div"),
+      { theme: "outline", size: "large" }
+    )
+  }, [])
+
   return (
     <div className="App">
       <div className='header-grid' style={{backgroundColor: "red"}}>
@@ -14,6 +40,9 @@ export default function App() {
       </div>
       <div className='graph-grid' style={{backgroundColor: "green"}}>
         <Outlet />
+      </div>
+      <div id="sign-in-div">
+
       </div>
     </div>
   );
