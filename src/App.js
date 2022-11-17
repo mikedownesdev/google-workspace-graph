@@ -12,9 +12,7 @@ export default function App() {
 
   function handleCallbackResponse(response) {
     console.log("Encoded JWT ID token: " + response.credential);
-    var userObject = jwtDecode(response.credential);
-    console.log(userObject)
-    setUser(userObject)
+    setUser(jwtDecode(response.credential));
   }
 
   useEffect(() => {
@@ -42,18 +40,11 @@ export default function App() {
         </div>
         <div className='sidebar-grid' style={{backgroundColor: "blue"}}>
           <Sidebar />
+          <div id="sign-in-div"></div>
         </div>
         <div className='graph-grid' style={{backgroundColor: "green"}}>
           <Outlet />
         </div>
-        <div id="sign-in-div"></div>
-        {
-          user && 
-            <div>
-              <img src={user.picture} />
-              <h3>{user.name}</h3>
-            </div>
-        }
       </UserContext.Provider>
     </div>
   );
