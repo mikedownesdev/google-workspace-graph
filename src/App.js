@@ -9,6 +9,7 @@ import { UserContext } from './contexts/UserContext';
 export default function App() {
 
   const [ user, setUser] = useState({})
+  const signInDivId = "sign-in-div";
 
   function handleCallbackResponse(response) {
     console.log("Encoded JWT ID token: " + response.credential);
@@ -27,7 +28,7 @@ export default function App() {
     })
 
     google.accounts.id.renderButton(
-      document.getElementById("sign-in-div"),
+      document.getElementById(signInDivId),
       { theme: "outline", size: "large" }
     )
   }, [])
@@ -40,7 +41,11 @@ export default function App() {
         </div>
         <div className='sidebar-grid' style={{backgroundColor: "blue"}}>
           <Sidebar />
-          <div id="sign-in-div"></div>
+          <div 
+            id="sign-in-div"
+            hidden={user.email ? true : false}
+          >  
+          </div>
         </div>
         <div className='graph-grid' style={{backgroundColor: "green"}}>
           <Outlet />
