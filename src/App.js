@@ -4,56 +4,50 @@ import { Outlet } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
-import { UserContext } from './contexts/UserContext';
+// import { UserContext } from './contexts/UserContext';
+import { AuthContext } from './contexts/AuthContext';
+import { useGoogleLogin } from '@react-oauth/google';
 
 export default function App() {
 
   const [ user, setUser] = useState({})
-  const signInDivId = "sign-in-div";
+  const [ authState, setAuthState ] = useState({})
 
-  function handleCallbackResponse(response) {
-    console.log("Encoded JWT ID token: " + response.credential);
-    setUser(jwtDecode(response.credential));
+  const handleLoginSuccess = (tokenResponse) => {
+    console.log(tokenResponse)
+    setAuthState(tokenResponse)
   }
 
-  useEffect(() => {
-    // This global google apparently tells the linter I know that YOU don't
-    // know that google exists, but we know its being loaded in from the script
-    // tag I added in my public/index.html file
+  const handleLoginFailure = (errorResponse) => console.log(errorResponse);
 
-    /* global google */
-    google.accounts.id.initialize({
-      client_id: "808500334020-hg05i7gll0es5o2v6ihl13hjo5hjjbbo.apps.googleusercontent.com",
-      ux_mode: "popup",
-      callback: handleCallbackResponse,
-    })
-
-    google.accounts.id.renderButton(
-      document.getElementById(signInDivId),
-      { theme: "outline", size: "large" }
-    )
-
-    // google.accounts.id.prompt()
-  }, [])
+  const login = useGoogleLogin({
+    // Despite the documentation, could I change this to auth-code for a refresh token?
+    flow: "implicit", 
+    scope: "https://www.googleapis.com/auth/drive",
+    onSuccess: handleLoginSuccess,
+    onError: handleLoginFailure
+  });
 
   return (
-    <div className="App">
-      <UserContext.Provider value={user}>
-        <div className='header-grid' style={{backgroundColor: "red"}}>
-          <Header />
-        </div>
-        <div className='sidebar-grid' style={{backgroundColor: "blue"}}>
-          <Sidebar />
-          <div 
-            id="sign-in-div"
-            hidden={user.email ? true : false}
-          >  
+      <div className="App">
+        <AuthContext.Provider value={authState}>
+          <div className='header-grid' style={{backgroundColor: "red"}}>
+            <Header />
           </div>
-        </div>
-        <div className='graph-grid' style={{backgroundColor: "green"}}>
-          <Outlet />
-        </div>
-      </UserContext.Provider>
-    </div>
+          <div className='sidebar-grid' style={{backgroundColor: "blue"}}>
+            <Sidebar />
+            { !authState.token && (
+                <button onClick={() => login()}>
+                  Sign in with Google 🚀{' '}
+                </button>
+              )
+            }
+          </div>
+          <div className='graph-grid' style={{backgroundColor: "green"}}>
+            <Outlet />
+          </div>
+        </AuthContext.Provider>
+      </div>
+    
   );
 }
