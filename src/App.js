@@ -24,13 +24,16 @@ export default function App() {
     /* global google */
     google.accounts.id.initialize({
       client_id: "808500334020-hg05i7gll0es5o2v6ihl13hjo5hjjbbo.apps.googleusercontent.com",
-      callback: handleCallbackResponse
+      ux_mode: "popup",
+      callback: handleCallbackResponse,
     })
 
     google.accounts.id.renderButton(
       document.getElementById(signInDivId),
       { theme: "outline", size: "large" }
     )
+
+    // google.accounts.id.prompt()
   }, [])
 
   return (

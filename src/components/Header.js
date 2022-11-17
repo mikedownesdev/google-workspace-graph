@@ -16,7 +16,7 @@ export default function Header() {
                 </span>
             </div>
             <div className="header-flex-item header-right">
-                {user && <img src={user.picture} alt="profile" />}
+                {user.picture && <img src={user.picture} alt="profile" />}
             </div>
         </div>
     )
