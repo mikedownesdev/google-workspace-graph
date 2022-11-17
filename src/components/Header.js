@@ -1,7 +1,11 @@
 import "./Header.css"
 import logo from "../assets/drive_logo.png"
+import { useContext } from "react"
+import { UserContext } from "../contexts/UserContext"
 
 export default function Header() {
+
+    const { user } = useContext(UserContext)
 
     return (
         <div id="header" className="header-flex-container">
@@ -12,7 +16,7 @@ export default function Header() {
                 </span>
             </div>
             <div className="header-flex-item header-right">
-                <img src={logo} alt="profile" />
+                {user && <img src={user.picture} alt="profile" />}
             </div>
         </div>
     )

@@ -1,16 +1,20 @@
 import jwtDecode from 'jwt-decode';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
+import { UserContext } from './contexts/UserContext';
 
 export default function App() {
+
+  const [ user, setUser] = useState({})
 
   function handleCallbackResponse(response) {
     console.log("Encoded JWT ID token: " + response.credential);
     var userObject = jwtDecode(response.credential);
     console.log(userObject)
+    setUser(userObject)
   }
 
   useEffect(() => {
@@ -32,18 +36,25 @@ export default function App() {
 
   return (
     <div className="App">
-      <div className='header-grid' style={{backgroundColor: "red"}}>
-        <Header />
-      </div>
-      <div className='sidebar-grid' style={{backgroundColor: "blue"}}>
-        <Sidebar />
-      </div>
-      <div className='graph-grid' style={{backgroundColor: "green"}}>
-        <Outlet />
-      </div>
-      <div id="sign-in-div">
-
-      </div>
+      <UserContext.Provider value={user}>
+        <div className='header-grid' style={{backgroundColor: "red"}}>
+          <Header />
+        </div>
+        <div className='sidebar-grid' style={{backgroundColor: "blue"}}>
+          <Sidebar />
+        </div>
+        <div className='graph-grid' style={{backgroundColor: "green"}}>
+          <Outlet />
+        </div>
+        <div id="sign-in-div"></div>
+        {
+          user && 
+            <div>
+              <img src={user.picture} />
+              <h3>{user.name}</h3>
+            </div>
+        }
+      </UserContext.Provider>
     </div>
   );
 }
