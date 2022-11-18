@@ -9,6 +9,8 @@ import ErrorPage from './components/ErrorPage';
 import GraphContainer from './components/GraphContainer';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import AuthProvider from './components/AuthProvider'
+
 
 
 const router = createBrowserRouter([
@@ -22,6 +24,10 @@ const router = createBrowserRouter([
         element: <Index />
       },
       {
+        path: "explorer",
+        element: <GraphContainer />
+      },
+      {
         path: "canvases/:canvasId",
         element: <GraphContainer />
       }
@@ -29,14 +35,14 @@ const router = createBrowserRouter([
   }
 ])
 
-
+const googleOAuthClientId = "808500334020-hg05i7gll0es5o2v6ihl13hjo5hjjbbo.apps.googleusercontent.com"
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider
-      clientId="808500334020-hg05i7gll0es5o2v6ihl13hjo5hjjbbo.apps.googleusercontent.com"
-    >  
-      <RouterProvider router={router} />
+    <GoogleOAuthProvider clientId={googleOAuthClientId}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );

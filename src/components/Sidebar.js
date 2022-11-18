@@ -2,10 +2,13 @@ import { NavLink } from "react-router-dom"
 import "./Sidebar.css"
 
 export default function Sidebar() {
+    
     return (
         <div id="sidebar">
             <ul>
-                <li>Explorer</li>
+                <li>
+                    <NavLink to={"/explorer"}>Explorer</NavLink>
+                </li>
             </ul>
             <hr />
             <span>Private Graphs</span>
