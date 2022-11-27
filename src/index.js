@@ -10,6 +10,7 @@ import GraphContainer from './components/GraphContainer';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import AuthProvider from './components/AuthProvider'
+import DriveProvider from './components/DriveProvider';
 
 
 
@@ -41,7 +42,9 @@ root.render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={googleOAuthClientId}>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <DriveProvider>
+          <RouterProvider router={router} />
+        </DriveProvider>
       </AuthProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>

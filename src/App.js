@@ -7,7 +7,6 @@ import { useGoogleLogin } from '@react-oauth/google';
 
 export default function App() {
 
-  // const [ user, setUser] = useState({})
   const { token, onLoginSuccess, onLoginFailure } = useAuth()
 
   const login = useGoogleLogin({

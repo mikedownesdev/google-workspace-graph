@@ -1,19 +1,19 @@
-import axios from "axios"
+// import axios from "axios"
 
-// const baseUrl = "https://www.googleapis.com/drive/v3/"
+// // const baseUrl = "https://www.googleapis.com/drive/v3/"
 
-export async function getFiles(auth) {
-  
-  const config = {
-    headers: {
-      Authorization: `Bearer ${auth.access_token}`
-    }
-  };
+// export async function getFiles(token) {
 
-  const url = "https://www.googleapis.com/drive/v3/files?corpora=user";
+//   const config = {
+//     headers: {
+//       Authorization: `Bearer ${token}`
+//     }
+//   };
 
-  axios
-    .get(url, config)
-    .then(res=> console.log(res))
-    .catch(err=> console.log(err))
-}
+//   const url = "https://www.googleapis.com/drive/v3/files?corpora=user";
+
+//   axios
+//     .get(url, config)
+//     .then(res=> console.log(res))
+//     .catch(err=> console.log(err))
+// }
