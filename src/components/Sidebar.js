@@ -1,8 +1,14 @@
 import { NavLink } from "react-router-dom"
+import { useDrive } from "../hooks/useDrive"
 import "./Sidebar.css"
 
 export default function Sidebar() {
-    
+
+    const driveObject = useDrive()
+    const files = driveObject?.data.files.filter(f => f.mimeType === "application/json")
+
+    console.log(driveObject)
+
     return (
         <div id="sidebar">
             <ul>
@@ -12,22 +18,21 @@ export default function Sidebar() {
             </ul>
             <hr />
             <span>Private Graphs</span>
-            <ul>                
-                <li>
-                    <NavLink 
-                        to={`canvases/1`}
-                        className={({ isActive, isPending }) =>
-                            isActive ? "active" : isPending ? "pending" : ""
-                        }
-                    >
-                        🌐 Graph 1
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to={`canvases/2`}>
-                        🌐 Graph 2
-                    </NavLink>
-                </li>
+            <ul>
+                {
+                    files && files.map((file) => {
+                        return (
+                            <li key={file.id}>
+                                <NavLink
+                                    to={`canvases/${file.id}`}
+                                    className={({ isActive, isPending }) => isActive ? "active" : isPending ? "pending" : ""}
+                                >
+                                    🌐 {file.name}
+                                </NavLink>
+                            </li>
+                        )
+                    })
+                }
             </ul>
             <hr />
             <span>Shared Graphs</span>

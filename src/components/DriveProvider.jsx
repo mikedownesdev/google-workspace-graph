@@ -24,9 +24,11 @@ export default function DriveProvider({ children }) {
         
         let res = axios
             .get(url, config)
-            .then(res=> console.log(res))
+            .then(res => {
+                console.log(res)
+                setFiles(res)
+            })
             .catch(err=> console.log(err))
-        setFiles(res)
     }, [token])
 
     return (
