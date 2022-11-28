@@ -5,15 +5,16 @@ import axios from "axios";
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth'
 import { useEffect, useState } from 'react';
+import { getDag } from "../api/getDag";
 
-// async function getCanvasById(fileId) {
-//     console.log(`Attempting to read file with id ${fileId}`)
+// async function getCanvasById(canvasId) {
+//     console.log(`Attempting to read file with id ${canvasId}`)
 //     const config = {
 //         headers: {
 //             Authorization: `Bearer ${token}`
 //         }
 //     };
-//     const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+//     const url = `https://www.googleapis.com/drive/v3/files/${canvasId}?alt=media`;
     
 //     let res = axios
 //         .get(url, config)
@@ -43,33 +44,47 @@ import { useEffect, useState } from 'react';
 export default function GraphContainer() {    
     const { canvasId } = useParams()
     console.log(canvasId)
-    // const { token } = useAuth();
-    
-    // const [fileId] = useState(canvasId)
-    // const [graphJson, setGraphJson] = useState(null)
+    const { token } = useAuth();
+    const [graphJson, setGraphJson] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+    console.log(`isLoading: ${isLoading}`)
 
-    // useEffect(() => {
-    //     console.log(`Attempting to read file with id ${fileId}`)
-    //     const config = {
-    //         headers: {
-    //             Authorization: `Bearer ${token}`
-    //         }
-    //     };
-    //     const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+
+    // const graphJson = getDag();
+
+    useEffect(() => {
+        setIsLoading(true)
+        console.log(`Attempting to read file with id ${canvasId}`)
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        const url = `https://www.googleapis.com/drive/v3/files/${canvasId}?alt=media`;
         
-    //     let res = axios
-    //         .get(url, config)
-    //         .then(res => {
-    //             console.log(res)
-    //             setGraphJson(res)
-    //         })
-    //         .catch(err=> console.log(err))
-    // }, [fileId, token])
+        axios
+            .get(url, config)
+            .then(res => {
+                console.log(res)
+                setGraphJson(res.data)
+            })
+            .catch(err=> console.log(err))
+            .finally(() => setIsLoading(false))
+    }, [canvasId, token])
 
     return (
         <div id="graph-container">
-            <SearchContainer /> 
-            <GraphSvg />
+            {
+                isLoading && <div>LOADING</div>
+            }
+            {
+                !isLoading && (
+                    <>
+                        <SearchContainer /> 
+                        <GraphSvg graphJson={graphJson}/>
+                    </>
+                )
+            }
         </div>
     )
 }

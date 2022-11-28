@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { getDag } from "../api/getDag";
 import GraphEdge from "./GraphEdge";
 import GraphNode from "./GraphNode";
 import "./GraphSvg.css"
 
-export default function GraphSvg() {
+export default function GraphSvg({graphJson}) {
     /** -- Get Data --------------------------------------------------------- */
-    const dagJson = getDag();
+    // const graphJson = getDag();
+
 
     /** -- State ------------------------------------------------------------ */
     const [dimensions] = useState({
@@ -14,14 +14,18 @@ export default function GraphSvg() {
         height: window.innerHeight
     })
 
+
     // Set each node to selected: false on mount
-    const initalNodesData = dagJson["nodes"].map(n => ({...n, selected: false}))
-    const initialEdgesData = dagJson["edges"];
+    const initalNodesData = graphJson["nodes"] ?
+        graphJson["nodes"].map(n => ({...n, selected: false})) : null;
+    const initialEdgesData = graphJson["edges"] ?
+        graphJson["edges"] : null;
 
     const [nodesData, setNodesData] = useState(initalNodesData)    
     const [edgesData, setEdgesData] = useState(initialEdgesData)
     const [creatingEdge, setCreatingEdge] = useState({ is: false, from: null })
-    console.log(`creatingEdge: ${creatingEdge.is} from ${creatingEdge.from}`)
+    // console.log(`creatingEdge: ${creatingEdge.is} from ${creatingEdge.from}`)
+
 
     /** -- Edges ------------------------------------------------------------ */
     const edges = edgesData.map(e => {
