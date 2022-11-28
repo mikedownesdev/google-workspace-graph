@@ -4,10 +4,6 @@ import GraphNode from "./GraphNode";
 import "./GraphSvg.css"
 
 export default function GraphSvg({graphJson}) {
-    /** -- Get Data --------------------------------------------------------- */
-    // const graphJson = getDag();
-
-
     /** -- State ------------------------------------------------------------ */
     const [dimensions] = useState({
         width: window.innerWidth,
@@ -16,9 +12,9 @@ export default function GraphSvg({graphJson}) {
 
 
     // Set each node to selected: false on mount
-    const initalNodesData = graphJson["nodes"] ?
+    const initalNodesData = graphJson?.nodes ?
         graphJson["nodes"].map(n => ({...n, selected: false})) : null;
-    const initialEdgesData = graphJson["edges"] ?
+    const initialEdgesData = graphJson?.edges ?
         graphJson["edges"] : null;
 
     const [nodesData, setNodesData] = useState(initalNodesData)    
@@ -28,7 +24,7 @@ export default function GraphSvg({graphJson}) {
 
 
     /** -- Edges ------------------------------------------------------------ */
-    const edges = edgesData.map(e => {
+    const edges = edgesData?.map(e => {
         const key = `${e.source}-${e.target}`
         const sourceNode = nodesData.find(n => n.id === e.source) 
         const targetNode = nodesData.find(n => n.id === e.target)
@@ -160,7 +156,7 @@ export default function GraphSvg({graphJson}) {
         setNodesData(newNodesData)
     }
 
-    const nodes = nodesData.map(n => {
+    const nodes = nodesData?.map(n => {
         return (
             <GraphNode 
                 key = {n.id}
